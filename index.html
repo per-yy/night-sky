@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>夜空</title>
+    <style>
+        #background {
+            width: 100vw;
+            height: 100vh;
+            background: black;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .meteor {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: white;
+            border-radius: 50%;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+        }
+
+        @keyframes twinkle {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(0.5);
+                opacity: 0.2;
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes meteor {
+            0% {
+                top: -1px;
+            }
+
+            100% {
+                top: 105%;
+                transform: translate(-700px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- <div style="position: absolute;width: 100%;height: 100%;overflow: hidden;">
+        <div id="background"></div>
+    </div> -->
+    <div id="background"></div>
+    <script>
+        function generateStar() {
+            let star = document.createElement('div');
+            star.classList.add('star');
+            //随机持续时间1.5-2.5s
+            star.style.animation = `twinkle ${Math.random() + 1.5}s linear infinite`;
+
+            //随机横坐标
+            star.style.left = Math.random() * window.innerWidth + 'px';
+
+            //随机纵坐标
+            star.style.top = Math.random() * window.innerHeight + 'px';
+
+            document.getElementById('background').appendChild(star);
+        }
+
+        function removeStar() {
+            let elements = document.getElementsByClassName('star');
+            if (elements.length > 0) {
+                elements[0].parentNode.removeChild(elements[0]);
+            }
+        }
+
+        function generateMeteor() {
+
+            let num = Math.random() * 4;
+            //随机生成0~4个流星
+            for (let i = 0; i < num; i++) {
+                let meteor = document.createElement('div');
+                meteor.classList.add('meteor');
+                //随机持续时间1-3s
+                meteor.style.animation = `meteor ${(Math.random() + 1) * 2}s linear infinite`;
+
+                //随机横坐标700-最大
+                meteor.style.left = 50 + Math.random() * (window.innerWidth - 50) + 'px';
+
+                document.getElementById('background').appendChild(meteor);
+            }
+
+        }
+
+        function removeMeteor() {
+            let elements = document.getElementsByClassName('meteor');
+
+            for (let i = elements.length - 1; i >= 0; i--) {
+                let element = elements[i];
+                const rect = element.getBoundingClientRect();
+                let leftValue = rect.left;
+                let topValue = rect.top;
+
+                if (leftValue <= 10 || topValue >= (window.innerHeight - 30)) {
+                    element.parentNode.removeChild(element);
+                }
+            }
+        }
+
+        //初始星星
+        for (let i = 0; i < 99; i++) {
+            generateStar();
+        }
+
+        //每隔一秒生成和消除一颗星星
+        setInterval(() => {
+            generateStar();
+            removeStar();
+        }, 1000)
+
+        //初始流星
+        for (let i = 0; i < 2; i++) {
+            generateMeteor();
+
+        }
+
+        //间断生成流星
+        setInterval(() => {
+            generateMeteor();
+        }, 3000)
+
+        //间断消除流星
+        setInterval(() => {
+            removeMeteor();
+        }, 100);
+    </script>
+</body>
+
+</html>
